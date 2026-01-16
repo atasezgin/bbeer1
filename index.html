@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beer Station V5 - AI Powered</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@300;400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body onclick="wakeUp()">
+
+    <div id="screensaver" class="screensaver">
+        <div class="saver-content">
+            <div class="neon-text">BEER<br>STATION</div>
+            <p>Dokun ve Serinle</p>
+            <div class="saver-info">
+                <i class="fa-solid fa-snowflake"></i> Tank: <span id="saver-temp">3.4</span>°C
+            </div>
+        </div>
+        <div class="saver-bg"></div>
+    </div>
+
+    <div class="bubbles">
+        <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+        <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+        <div class="bubble"></div><div class="bubble"></div>
+    </div>
+
+    <div class="status-bar glass-panel">
+        <div class="sb-left"><i class="fa-solid fa-server"></i> System: Online</div>
+        <div class="sb-center"><i class="fa-solid fa-gauge-high"></i> Basınç: 1.2 Bar</div>
+        <div class="sb-right" id="clock">00:00</div>
+    </div>
+
+    <div class="kiosk-container">
+        <main class="product-grid" id="product-container">
+            </main>
+
+        <aside class="sidebar glass-panel">
+            <div class="header-logo" onclick="triggerAdmin()">
+                <h1>BEER STATION</h1>
+                <p>AI Powered V5.0</p>
+            </div>
+
+            <div class="cart-items" id="cart-items">
+                </div>
+
+            <div class="checkout-section">
+                <div class="total-row">
+                    <span>TOPLAM</span>
+                    <span id="total-price">0.00 ₺</span>
+                </div>
+                <button class="checkout-btn" onclick="checkAge()">
+                    ÖDEME & DOLUM <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <div id="wizard-modal" class="modal">
+        <div class="wizard-content glass-panel">
+            <button class="close-wizard" onclick="closeModal('wizard-modal')"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div id="wizard-step-1" class="wizard-step active">
+                <div class="wizard-icon"><i class="fa-solid fa-face-laugh-beam"></i></div>
+                <h2>Şu anki modun nedir?</h2>
+                <div class="wizard-options">
+                    <button class="w-btn" onclick="wizardNext(1, 'chill')">😌 Sakin / Chill</button>
+                    <button class="w-btn" onclick="wizardNext(1, 'party')">🔥 Enerjik / Parti</button>
+                </div>
+            </div>
+
+            <div id="wizard-step-2" class="wizard-step">
+                <div class="wizard-icon"><i class="fa-solid fa-droplet"></i></div>
+                <h2>Damak tadın nasıl?</h2>
+                <div class="wizard-options">
+                    <button class="w-btn" onclick="wizardNext(2, 'light')">🍃 Hafif & Ferah</button>
+                    <button class="w-btn" onclick="wizardNext(2, 'strong')">💪 Yoğun & Sert</button>
+                </div>
+            </div>
+
+            <div id="wizard-step-loading" class="wizard-step">
+                <div class="scanner"></div>
+                <h2>Yapay Zeka Seçiyor...</h2>
+                <p>Tercihlerin analiz ediliyor</p>
+            </div>
+
+            <div id="wizard-result" class="wizard-step">
+                <h3>SANA ÖZEL SEÇİMİMİZ:</h3>
+                <div id="wizard-recommendation"></div>
+                <button class="w-btn confirm" onclick="acceptRecommendation()">Hemen Ekle</button>
+                <button class="w-btn retry" onclick="resetWizard()">Tekrar Dene</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="size-modal" class="modal">
+        <div class="modal-content glass-panel">
+            <span class="close-btn" onclick="closeModal('size-modal')">&times;</span>
+            <div class="modal-header">
+                <img id="modal-img" src="" alt="">
+                <h2 id="modal-title">Ürün</h2>
+            </div>
+            <div class="size-options" id="size-options-container"></div>
+        </div>
+    </div>
+
+    <div id="snack-modal" class="modal">
+        <div class="modal-content glass-panel match-content">
+            <div class="match-badge">MÜKEMMEL İKİLİ</div>
+            <div class="match-visuals">
+                <img id="match-beer-img" src="" class="slide-left">
+                <i class="fa-solid fa-plus pulse-icon"></i>
+                <img id="match-snack-img" src="" class="slide-right">
+            </div>
+            <h2 id="match-title">Fıstık İster misin?</h2>
+            <p id="match-desc">Bu biranın yanına en iyi bu gider!</p>
+            
+            <div class="age-buttons">
+                <button class="btn-confirm" onclick="addSnack()">Evet, Ekle (+<span id="snack-price">25</span>₺)</button>
+                <button class="btn-cancel" onclick="finalizeAddToCart()">Hayır, Teşekkürler</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="modal">
+        <div class="admin-panel glass-panel">
+            <div class="admin-header">
+                <h2><i class="fa-solid fa-user-gear"></i> MÜHENDİSLİK PANELİ</h2>
+                <button class="close-admin" onclick="closeModal('admin-modal')">ÇIKIŞ</button>
+            </div>
+            <div class="admin-grid">
+                <div class="keg-stats">
+                    <h3>Fıçı Doluluk Oranları</h3>
+                    <div id="keg-list"></div>
+                </div>
+                <div class="system-stats">
+                    <h3>Canlı Veriler</h3>
+                    <div class="stat-box">
+                        <span><i class="fa-solid fa-temperature-arrow-down"></i> Soğutucu:</span>
+                        <span class="stat-val" id="admin-temp">3.4 °C</span>
+                    </div>
+                    <div class="stat-box">
+                        <span><i class="fa-solid fa-cash-register"></i> Günlük Ciro:</span>
+                        <span class="stat-val" id="daily-revenue">0.00 ₺</span>
+                    </div>
+                    <button class="reset-btn" onclick="resetKegs()">Fıçıları Yenile</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="age-modal" class="modal">
+        <div class="modal-content glass-panel warning-content">
+            <i class="fa-solid fa-triangle-exclamation warn-icon"></i>
+            <h2>YASAL UYARI</h2>
+            <p>18+ Doğrulama Gereklidir.</p>
+            <div class="age-buttons">
+                <button class="btn-confirm" onclick="startPouring()">Onayla</button>
+                <button class="btn-cancel" onclick="closeModal('age-modal')">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pouring-overlay" class="overlay">
+        <div class="pouring-content">
+            <h2>Dolum Yapılıyor...</h2>
+            <div class="beer-glass-container">
+                <div class="glass">
+                    <div class="beer-liquid" id="liquid"></div>
+                    <div class="beer-foam" id="foam"></div>
+                </div>
+            </div>
+            <p id="pouring-status">Başlatılıyor...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
